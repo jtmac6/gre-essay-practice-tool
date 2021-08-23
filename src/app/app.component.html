@@ -1,17 +1,16 @@
 <div class="container">
 
-  <h1>GRE Essay Practice!</h1>
-  <div class="btn-group my-4" role="group" aria-label="Toggle between issue and arugment essay prompts">
+  <h1 class="mt-3">GRE Essay Practice!</h1>
+  <div class="btn-group my-4 me-3" role="group" aria-label="Toggle between issue and arugment essay prompts">
     <input
       type="radio"
       class="btn-check"
       name="btnradio"
       id="issue"
       [(ngModel)]="promptType"
-      (ngModelChange)="updateTopic()"
       value="issue"
       autocomplete="off">
-    <label class="btn btn-outline-primary" for="issue">Issue</label>
+    <label class="btn btn-outline-primary btn-lg" for="issue">Issue</label>
 
     <input
       type="radio"
@@ -19,27 +18,57 @@
       name="btnradio"
       id="argument"
       [(ngModel)]="promptType"
-      (ngModelChange)="updateTopic()"
       value="argument"
       autocomplete="off">
-    <label class="btn btn-outline-primary" for="argument">Argument</label>
+    <label class="btn btn-outline-primary btn-lg" for="argument">Argument</label>
   </div>
 
-  <div>
-    <h2>Instructions:</h2>
-    <p>{{ instructions }}</p>
-    <h2>Prompt:</h2>
-    <p>{{ prompt }}</p>
+  <button class="btn btn-primary btn-lg" (click)="updateTopic()">New Topic</button>
+
+  <div *ngIf="displayTopic">
+    <div>
+      <h2>Instructions:</h2>
+      <p>{{ instructions }}</p>
+      <h2>Prompt:</h2>
+      <p>{{ prompt }}</p>
+    </div>
+    <div class="mt-5 d-flex justify-content-between">
+      <p>Write your response below</p>
+      <div class="d-flex align-items-center">
+        <countdown #cd [config]="{leftTime: 1800, format: 'mm:ss'}" (event)="handleEvent($event)"></countdown>
+        <button class="btn btn-outline-primary btn-sm ms-3" (click)="toggleTimer()">{{paused ? "Start" : "Pause"}}</button>
+        <button class="btn btn-outline-primary btn-sm ms-2" (click)="restartTimer()">Restart</button>
+      </div>
+    </div>
+    <textarea class="form-control" id="response" rows="10" [formControl]="response"></textarea>
+    <div class="d-flex justify-content-end mt-2">
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="finishWriting()">
+        Finish
+      </button>
+    </div>
+    <!-- Button trigger modal -->
+
+<!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Finish</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <span>Time Remaining: {{remainingTime}}</span><br>
+            <span>Word Count: {{ wordsCount }}</span>
+          </div>
+          <button class="btn btn-outline-primary" (click)="downloadEssay()">Download Essay</button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div class="mt-5 d-flex justify-content-between">
-    <p>Write your response below</p>
-  </div>
-  <textarea class="form-control" id="response" rows="10"></textarea>
-
-  <div class="d-flex justify-content-end mt-2"><button class="btn btn-primary">Done</button></div>
-
-
 
   <router-outlet></router-outlet>
 </div>

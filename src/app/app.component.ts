@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
-import { Observable, timer } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { Component, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { CountdownComponent } from 'ngx-countdown';
 import * as argumentData from '../assets/argument-pool.json';
 import * as issueData from '../assets/issue-pool.json';
+import wordsCount from 'words-count';
+import { saveAs } from 'file-saver'
 
 @Component({
   selector: 'app-root',
@@ -11,8 +13,14 @@ import * as issueData from '../assets/issue-pool.json';
 })
 export class AppComponent {
 
-  counter$: Observable<number> | undefined;
-  count = 60;
+  @ViewChild('cd', { static: false }) private countdown: CountdownComponent;
+
+  response = new FormControl('');
+  wordsCount = 0;
+
+  paused = false;
+  displayTopic = false;
+  remainingTime: string;
 
   promptType = "issue";
 
@@ -24,35 +32,59 @@ export class AppComponent {
 
   ngOnInit(): void {
 
-    this.updateTopic();
-
   }
 
   updateTopic(): void {
 
     if (this.promptType === 'issue'){
 
-      console.log("choosing an issue topic");
       let randomIssueTopic = this.issueTopics[Math.floor(Math.random()*this.issueTopics.length)];
-
       this.instructions = randomIssueTopic.instructions;
       this.prompt = randomIssueTopic.prompt;
 
     }else {
 
-      console.log("choosing an arg topic");
       let randomArgumentTopic = this.argumentTopics[Math.floor(Math.random()*this.argumentTopics.length)];
-
       this.instructions = randomArgumentTopic.instructions;
       this.prompt = randomArgumentTopic.prompt;
 
     }
 
-    this.counter$ = timer(0,1000).pipe(
-      take(this.count),
-      map(() => --this.count)
-    );
+    this.displayTopic = true;
+    if(this.countdown){
+      this.countdown.restart();
+    }
 
+  }
+
+  restartTimer(): void {
+    this.countdown.restart();
+  }
+
+  toggleTimer(): void {
+
+    if(this.paused){
+      this.countdown.resume();
+    }else{
+      this.countdown.pause();
+    }
+    this.paused = !this.paused
+  }
+
+  handleEvent(event: any): void{
+    this.remainingTime = event.text;
+  }
+
+  downloadEssay():void {
+    let blob = new Blob([this.response.value], {type: 'text/plain'});
+    let filename = "essay.txt";
+    saveAs(blob, filename);
+  }
+
+  finishWriting():void {
+
+    this.countdown.pause();
+    this.wordsCount = wordsCount(this.response.value);
 
   }
 
