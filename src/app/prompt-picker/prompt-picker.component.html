@@ -1,0 +1,70 @@
+<h1 class="mt-3">GRE Essay Practice!</h1>
+<div class="btn-group my-4 me-3" role="group" aria-label="Toggle between issue and arugment essay prompts">
+  <input
+    type="radio"
+    class="btn-check"
+    name="btnradio"
+    id="issue"
+    [(ngModel)]="promptType"
+    value="issue"
+    autocomplete="off">
+  <label class="btn btn-outline-primary btn-lg" for="issue">Issue</label>
+
+  <input
+    type="radio"
+    class="btn-check"
+    name="btnradio"
+    id="argument"
+    [(ngModel)]="promptType"
+    value="argument"
+    autocomplete="off">
+  <label class="btn btn-outline-primary btn-lg" for="argument">Argument</label>
+</div>
+
+<button class="btn btn-primary btn-lg" (click)="updateTopic()">New Topic</button>
+
+<div *ngIf="displayTopic">
+  <div>
+    <h2>Instructions:</h2>
+    <p>{{ instructions }}</p>
+    <h2>Prompt:</h2>
+    <p>{{ prompt }}</p>
+  </div>
+  <div class="mt-5 d-flex justify-content-between">
+    <p>Write your response below</p>
+    <div class="d-flex align-items-center">
+      <countdown #cd [config]="{leftTime: 1800, format: 'mm:ss'}" (event)="handleEvent($event)"></countdown>
+      <button class="btn btn-outline-primary btn-sm ms-3" (click)="toggleTimer()">{{paused ? "Start" : "Pause"}}</button>
+      <button class="btn btn-outline-primary btn-sm ms-2" (click)="restartTimer()">Restart</button>
+    </div>
+  </div>
+  <textarea class="form-control" id="response" rows="10" [formControl]="response"></textarea>
+  <div class="d-flex justify-content-between mt-2">
+    <button type="button" class="btn btn-outline-primary" (click)="clear()">
+      Clear
+    </button>
+    <button type="button" class="btn btn-primary" (click)="openModal(template)">
+      Finish
+    </button>
+  </div>
+  <!-- Button trigger modal -->
+</div>
+<ng-template #template>
+  <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">
+      <span>{{remainingTime === '00:00' ? 'Time\'s Up!' : 'Finished?'}}</span>
+    </h5>
+    <button type="button" class="btn-close" (click)="modalRef?.hide()" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3">
+      <span *ngIf="remainingTime !== '00:00'">Time Remaining: {{remainingTime}}</span><br>
+      <span>Word Count: {{ wordsCount }}</span>
+    </div>
+    <button class="btn btn-outline-primary" (click)="downloadEssay()">Download Essay</button>
+  </div>
+  <div class="modal-footer d-flex justify-content-between">
+    <button *ngIf="remainingTime !== '00:00'" type="button" class="btn btn-outline-primary" (click)="continueWriting()">Keep Writing</button>
+    <button type="button" class="btn btn-primary" (click)="modalRef?.hide()">Close</button>
+  </div>
+</ng-template>

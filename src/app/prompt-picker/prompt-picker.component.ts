@@ -1,19 +1,18 @@
-import { Component, ElementRef, Inject, TemplateRef, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { CountdownComponent } from 'ngx-countdown';
-import * as argumentData from '../assets/argument-pool.json';
-import * as issueData from '../assets/issue-pool.json';
-import wordsCount from 'words-count';
-import { saveAs } from 'file-saver'
 import { DOCUMENT } from '@angular/common';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { CountdownComponent } from 'ngx-countdown';
+import wordsCount from 'words-count';
+import * as argumentData from '../../assets/argument-pool.json';
+import * as issueData from '../../assets/issue-pool.json';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: 'app-prompt-picker',
+  templateUrl: './prompt-picker.component.html',
+  styleUrls: ['./prompt-picker.component.scss']
 })
-export class AppComponent {
+export class PromptPickerComponent implements OnInit {
 
   @ViewChild('cd', { static: false }) private countdown: CountdownComponent;
   @ViewChild('template') template: TemplateRef<any>;
